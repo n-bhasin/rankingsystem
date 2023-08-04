@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Multiple Input Boxes Example</title>
+    
+  </head>
+  <body>
+    <form>
+      <label for="totalbusiness">Total business requirement</label>
+      <input type="text" id="totalbusiness" name="totalbusiness" value="10000"/></br>
+      <!-- legs -->
+      <label for="Leg1">Mike1 Leg1</label>
+      <input type="text" id="Leg1" name="Leg1" value="10000"/></br>
+      
+      <label for="Leg2">Mike2 Leg2</label>
+      <input type="text" id="Leg2" name="Leg2" value="2000"/></br>
+
+      <label for="Leg3">Mike3 Leg3</label>
+      <input type="text" id="Leg3" name="Leg3" value="100"/></br>
+
+      <label for="Leg4">Mike4 Leg4</label>
+      <input type="text" id="Leg4" name="Leg4" value="200"/></br>
+
+      <label for="Leg5">Mike5 Leg5</label>
+      <input type="text" id="Leg5" name="Leg5" value="400"/></br>
+
+      <label for="Leg6">Mike6 Leg6</label>
+      <input type="text" id="Leg6" name="Leg6" value="300"/></br>
+
+      <label for="Leg7name">Mike7 Leg7</label>
+      <input type="text" id="Leg7" name="Leg7" value="600"/></br>
+
+      <label for="Leg8">Mike8 Leg8</label>
+      <input type="text" id="Leg8" name="Leg8" value="200"/></br>
+
+      <label for="Leg9">Mike9 Leg9</label>
+      <input type="text" id="Leg9" name="Leg9" value="500"/></br>
+
+      <label for="Leg10">Mike10 Leg10</label>
+      <input type="text" id="Leg10" name="Leg10" value="100"/></br>
+
+     <div id="brackets"></div>
+      <div id="fifty"></div>
+      <div id="ten"></div>
+      <div id="forty"></div>
+
+      <button type="button" id="calculateButton">Calculate</button>
+    </form>
+    <script>
+     document.getElementById("calculateButton").addEventListener("click", function(){
+          let data=[]
+          const totalBusiness = document.getElementById('totalbusiness').value
+          const bracket2 = 0.1 * parseInt(totalBusiness);
+          const bracket1 = 0.5 * parseInt(totalBusiness);
+          const bracket3 = 0.4 * parseInt(totalBusiness);
+
+          for (let i = 1; i <= 10; i++) {
+                const legValue = parseFloat(document.getElementById(`Leg${i}`).value);
+                data.push({ name: `mike${i}`, sales: legValue });
+          }
+
+          const sortedData = [...data].sort((a, b) => b.sales - a.sales);
+          console.log("sortedData",sortedData)
+          // Calculate 50% bracket
+          const fiftyPercentSales = sortedData[0].sales >= bracket1;
+          let fiftyPercentBracket = [];
+  
+          for (const item of sortedData) {
+               if (fiftyPercentBracket.length === 0 && item.sales >= bracket1) {
+                    fiftyPercentBracket.push(item);
+                    break;
+               }
+          }
+          // Calculate 10% bracket
+          let remainingData = sortedData.filter(item => !fiftyPercentBracket.includes(item));
+          let tenPercentBracket = [];
+          const exact10percent = remainingData.find(item => item.sales === bracket2);
+          if (exact10percent) {
+               tenPercentBracket.push(exact10percent);
+               remainingData = remainingData.filter(i => i !== exact10percent);
+  	     }else if (remainingData.find(item => item.sales > bracket2)){
+               const greaterThan10percent = remainingData.find(item => item.sales > bracket2);
+               if (greaterThan10percent) {
+                    tenPercentBracket.push(greaterThan10percent);
+                    remainingData = remainingData.filter(i => i !== greaterThan10percent);
+               }
+          }
+          
+
+          // Calculate 40% bracket
+          const remainingSales = remainingData.reduce((sum, item) => sum + item.sales, 0);
+          console.log("remainingSales",remainingSales, "bracket3",bracket3)
+
+          const fortyPercentSales = remainingSales >= bracket3;
+
+          document.getElementById("brackets").innerHTML = `Bracket1- ${bracket1}, Bracket2- ${bracket2}, Bracket3- ${bracket3}`;
+          document.getElementById('fifty').innerHTML = `<p>50% - ${JSON.stringify(fiftyPercentBracket)} completed - ${fiftyPercentBracket.length === 1}</p>`
+          document.getElementById('ten').innerHTML = `<p>10% - ${JSON.stringify(tenPercentBracket)} completed - ${tenPercentBracket.length === 1}</p>`
+          document.getElementById('forty').innerHTML = `<p>40% - "remainingSales" ${remainingSales} "bracket3" ${bracket3} completed - ${fortyPercentSales}</p>`
+
+          console.log(
+               `50PercentBracket - ${JSON.stringify(fiftyPercentBracket)} - ${fiftyPercentBracket.length === 1}`,
+               `10PercentBracket - ${JSON.stringify(tenPercentBracket)} - ${tenPercentBracket.length === 1}`,
+               `40PercentBracket - "remainingSales" ${remainingSales} "bracket3" ${bracket3} `
+          )
+     })
+    </script>
+  </body>
+</html>
